@@ -1,12 +1,13 @@
-### NAME:
-### ROLL NO :
-### DEPARTMENT 
-### DATE
+
 
 
 
 ## EXPERIMENT-04-TRASFERING-DATA-TO-MQTT-CLOUD-USING-PYTHON-INTERFACE-
 
+### NAME:Prajeeth K T
+### ROLL NO :212222110034
+### DEPARTMENT :CSE(IOT)
+### DATE:27/02/26
 
 
 ## AIM:
@@ -138,17 +139,67 @@ Run the Python script.
 
 Check if the message appears in the HiveMQ Web Client.
 ## PROGRAM
-[
-
-
-
-
-
-]
+~~~
+!pip install paho-mqtt
+import time
+import paho.mqtt.client as mqtt
+broker = "97825dc4ffeb4ef69020a34b200834d7.s1.eu.hivemq.cloud"
+port = 8883
+topic = "iot/demo/sensor"
+username = "hivemq.webclient.1772167962865"
+password = "C:8ieP7F1U%b2Ltr&Xw!"
+client = mqtt.Client(client_id="python-publisher-001",
+callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+client.username_pw_set(username, password)
+client.tls_set()
+def on_connect(client, userdata, flags, reasonCode, properties):
+  print("Connected to broker, reasonCode:", reasonCode)
+def on_publish(client, userdata, mid):
+  print("on_publish called, mid:", mid)
+def on_disconnect(client, userdata, reasonCode, properties):
+  print("Disconnected, reasonCode:", reasonCode)
+client.on_connect = on_connect
+client.on_publish = on_publish
+client.on_disconnect = on_disconnect
+client.connect(broker, port, keepalive=60)
+client.loop_start()
+message = "AJITH.A"
+info = client.publish(topic, payload=message, qos=1, retain=True)
+info.wait_for_publish()
+time.sleep(0.2)
+client.loop_stop()
+client.disconnect()
+print(f"Message '{message}' published to topic '{topic}' (qos=1 retain=True)")
+~~~
+~~~
+!pip install paho-mqtt
+import paho.mqtt.client as mqtt
+import time
+import random
+import ssl
+broker = "97825dc4ffeb4ef69020a34b200834d7.s1.eu.hivemq.cloud"
+port = 8883
+topic = "iot/demo/sensor"
+username = "hivemq.webclient.1772167962865"
+password = "C:8ieP7F1U%b2Ltr&Xw!"
+client = mqtt.Client(client_id="publisher")
+client.username_pw_set(username, password)
+client.tls_set(tls_version=ssl.PROTOCOL_TLS)
+client.connect(broker, port)
+while True:
+    temprature = round(random.uniform(20.0, 30.0), 2)
+    humidity = round(random.uniform(30.0, 70.0), 2)
+    payload = f"Temprature: {temprature:.2f} C, Humidity: {humidity:.2f}%"
+    client.publish(topic, payload)
+    print(f" Published: {payload} + {topic}")
+    time.sleep(5)
+~~~
 
 ### OUTPUT SCREENSHOTS
 
+![041413ed-5e29-4817-ae85-f3037b11053e](https://github.com/user-attachments/assets/2eebb8bc-a7fd-49b2-a416-9bb814fd1ca9)
 
+<img width="1918" height="878" alt="555786796-0fc8f28c-5690-4c20-9b5b-56879b508edb" src="https://github.com/user-attachments/assets/bf5f8547-c64a-4b2b-a569-95d0c9dffa84" />
 
 ## Results
 
